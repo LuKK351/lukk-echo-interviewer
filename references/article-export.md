@@ -18,7 +18,7 @@ Offer article export only when all four conditions are true:
 
 - At least one material anchor was explained by the user in their own words.
 - The user expressed at least one original judgment, analogy, objection, boundary, application, or new question.
-- The interview contains a recognizable expression line that can support an article.
+- The interview contains a recognizable expression line that can be stated as one clear article theme.
 - The article can be supported mainly by the user's words, not by the assistant's reflections.
 
 Do not offer article export when:
@@ -26,6 +26,8 @@ Do not offer article export when:
 - The user mostly repeated the material or the assistant's wording.
 - The user mostly discussed personal situations without tying them back to material anchors.
 - The interview produced only impressions, feelings, or fragments.
+- The available material can only be turned into a chronological interview recap.
+- The assistant cannot state the article's theme in one plain sentence before writing.
 - The article would require adding material anchors the user did not discuss.
 - The article would rely mainly on assistant-written summary.
 
@@ -47,13 +49,13 @@ This sounds like an internal scoring report and may make the user accept the ass
 
 Say it as an optional capability after the pause point:
 
-> 上面的访谈内容已经可以整理成一篇小短文：以你刚才说出的理解为原料，保留你的口吻、节奏和例子。需要我现在导出吗？
+> 上面的访谈内容已经可以整理成一篇小短文：以你刚才说出的理解为原料，保留你的口吻和关键表达，同时做必要的整理。需要我现在导出吗？
 
 Prompt rules:
 
 - Mention that article export is optional.
 - Say it uses the user's interview material as raw material.
-- Mention user voice, rhythm, examples, or wording.
+- Mention user voice, key expressions, examples, or necessary editing.
 - Do not mention the route type.
 - Do not announce the article's main line.
 - Do not mention "article body + AI advice" in the prompt.
@@ -63,6 +65,28 @@ Prompt rules:
 Do not use one fixed article template.
 
 Choose one route from this fixed route library based on the interview result.
+
+Before choosing a route, write one internal sentence:
+
+> This article is about: <one clear user-owned theme>.
+
+If that sentence cannot be written plainly, do not export an article. Keep the pause point and say the material is not yet organized enough for an article.
+
+## Selection Over Coverage
+
+The article is not a transcript, recap, or complete stitching of every user answer.
+
+Use only the material that serves the article theme. It is correct to omit user statements that are true but do not help the article stand up.
+
+Before writing, sort interview material into three groups:
+
+- Core: must appear because it carries the theme.
+- Support: may appear if it clarifies the theme.
+- Left out: true but not needed, repetitive, too fragmentary, or only useful for `AI 建议`.
+
+If a sentence only exists because "the user said it", delete it. A paragraph must have a job: opening the material trigger, stating the user's judgment, explaining the reason, showing an example, naming a boundary, or ending where the user's thought stops.
+
+Do not preserve interview order by default. Choose the order that makes the user's thought readable.
 
 ### Single-Point Argument
 
@@ -154,10 +178,11 @@ The user's voice outranks the assistant's style.
 
 Language priority:
 
-1. User's original words.
-2. Light cleanup in the user's voice.
-3. Necessary connecting sentences.
-4. Assistant wording.
+1. User's clean meaning.
+2. User's strongest original phrases.
+3. Light cleanup in the user's voice.
+4. Necessary connecting sentences.
+5. Assistant wording.
 
 The assistant may:
 
@@ -167,6 +192,8 @@ The assistant may:
 - Add necessary context.
 - Smooth spoken fragments.
 - Clarify ambiguous references such as "this" or "it".
+- Correct obvious typos, speech-to-text artifacts, duplicated words, false starts, and malformed phrases.
+- Merge two broken spoken clauses into one readable sentence when the meaning is clear.
 
 The assistant must not:
 
@@ -179,6 +206,28 @@ The assistant must not:
 - Add a conclusion when the user did not reach one.
 - Translate a vivid user phrase into smoother written prose when the original phrase already works.
 - Add technical failure modes, examples, risks, or concepts that the user did not say.
+- Preserve accidental wording that makes the sentence confusing.
+- Include every user answer merely because it appeared in the interview.
+
+## Speech Cleanup
+
+Preserving user voice means preserving meaning, rhythm, and strong phrases. It does not mean preserving typos, voice-input errors, or broken spoken fragments.
+
+Clean these without asking:
+
+- duplicated subjects or words
+- obvious speech-to-text errors
+- mid-sentence restarts
+- filler particles that make written Chinese clumsy
+- malformed phrases where the intended wording is obvious
+
+Example:
+
+- Bad: `每个人、每个体，它有自己的品格`
+- Good: `每个个体都有自己的品格`
+- Also acceptable: `每个人都有自己的品格`
+
+Do not over-clean into generic essay prose. Keep useful spoken flavor, such as `更灵活这三个字，它没有标准呀`, when it carries the user's thought.
 
 ## Source Traceability
 
@@ -191,9 +240,12 @@ Every substantive sentence in the article must trace back to one of these:
 
 If the assistant can only justify a sentence by saying "this follows from what the user said", keep it out of the article. Put it in `AI 建议` if it is useful.
 
+Traceability is not literal copying. A cleaned sentence may be traceable even when it fixes wording, removes repetition, or corrects an obvious speech error.
+
 Before output, run this internal check on each paragraph:
 
 - Which user answer supports this paragraph?
+- What job does this paragraph do for the article theme?
 - Did the user say this, or did I infer it?
 - If I removed assistant-written polish, would the user's point still be visible?
 - Did I add a new example, risk, failure mode, or conclusion?
@@ -210,12 +262,16 @@ Prefer:
 - Slightly cleaned spoken rhythm.
 - Concrete words the user used.
 - A plain ending where the user's thought naturally stops.
+- A short article with a clear theme over a longer article that includes every answer.
 
 Avoid:
 
 - Slogan endings.
 - Symmetric closing lines.
 - Over-complete argument chains.
+- Chronological stitching of all interview turns.
+- Paragraphs that repeat the interview order but do not build an article.
+- Dramatic line breaks around weak or unclear phrases.
 - Extra rhetorical questions not asked by the user.
 - Phrases that sound like an article template.
 - Reframing user examples into universal lessons.
@@ -310,9 +366,12 @@ Then output the article.
 Article rules:
 
 - Use a title based on the user's core judgment.
+- Make the opening establish one clear theme, not just restate the first interview answer.
 - Do not title it "读《XX》有感".
 - Do not describe the interview process.
 - Do not include material anchors the user did not discuss.
+- Do not include all user statements by default.
+- Do not preserve confusing oral fragments, typos, or voice-input artifacts.
 - Do not add conclusions the user did not say.
 - Do not include AI advice in the article body.
 
@@ -360,6 +419,10 @@ The export fails if:
 - AI advice leaks into the article body.
 - The assistant fills in untouched material anchors.
 - Every interview is forced into the same article route.
+- The article hard-threads every user answer into one essay.
+- The article has a catchy title but no clear theme.
+- The article preserves obvious typos, speech-to-text errors, or broken spoken fragments as if they were style.
+- The article line-breaks a weak fragment to make it look profound.
 - The ending stage starts asking new interview questions.
 - The article contains assistant-created "不是 xxx，而是 xxx" style sentences.
 - The ending prompt exposes internal route labels or announces the article's main line before the user confirms.
