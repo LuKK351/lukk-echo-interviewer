@@ -253,11 +253,55 @@ If any appear in assistant-created sentences, rewrite them plainly or remove the
 
 ## Output Contract
 
-When the user confirms article export, output two sections.
+When the user confirms article export, prefer writing `article.md` in the active session directory.
 
-### Section 1: Article
+If `references/session-persistence.md` has created an active session and file writing is available:
 
-Start with:
+- Use `interview.md` as the source record.
+- Write the article and `AI 建议` into `article.md`.
+- Return only file paths in the console.
+- Do not print the full article in the console unless the user asks to see it.
+
+Console response after successful file output:
+
+```text
+已导出：
+访谈记录：<interview.md>
+文章：<article.md>
+```
+
+If file writing is disabled, unavailable, or fails, fall back to console output and include both sections below.
+
+### article.md Shape
+
+When writing to file, use this shape:
+
+```markdown
+---
+title: "<文章标题>"
+source_session: "./interview.md"
+created_at: "<ISO 时间>"
+material_scope: "<只覆盖本轮访谈 / 覆盖整个会话>"
+---
+
+# <文章标题>
+
+> 这篇文章只基于本轮访谈中你已经说出的内容，不覆盖整份材料。
+
+<文章正文>
+
+## AI 建议
+
+- <建议 1>
+```
+
+If there is no `interview.md`, omit `source_session` and state the source as the current conversation.
+
+### Console Fallback
+
+When writing to file is not available, output two sections in the console.
+
+First, start with:
 
 > 这篇文章只基于本轮访谈中你已经说出的内容，不覆盖整份材料。
 
