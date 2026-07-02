@@ -12,6 +12,24 @@ It is not the main task of the skill. It does not change the interview into writ
 
 Use it to turn what the user already said into a readable article. Do not use it to invent what the user did not say.
 
+## Execution Order
+
+Follow this order. If later rules conflict with earlier rules, earlier rules win.
+
+1. Confirm this is the ending stage; never use article export during normal interview.
+2. Run readiness check; if not ready, stop with a brief reason and do not ask more questions.
+3. Offer export only as an optional capability after the pause point.
+4. State one internal article theme; if there is no clear theme, do not export.
+5. Select material for that theme; do not include every interview answer.
+6. Write with traceable user meaning, clean obvious speech errors, then follow the output contract.
+
+Priority stack:
+
+- No invention outranks fluency.
+- Clear article theme outranks covering all user answers.
+- User meaning outranks literal wording.
+- File output outranks console output only when writing works.
+
 ## Readiness Check
 
 Offer article export only when all four conditions are true:

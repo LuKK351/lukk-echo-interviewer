@@ -16,7 +16,7 @@ It is not a note-taking product, writing workflow, or separate report format.
 
 ## Default Folder
 
-When local file writing is available, create one session folder by default:
+When local file writing is available, prepare one session folder path by default:
 
 ```text
 ./lukk-echo-sessions/YYYY-MM-DD-HHMM-<material-slug>/
@@ -30,6 +30,8 @@ $HOME/lukk-echo-sessions/YYYY-MM-DD-HHMM-<material-slug>/
 
 If neither location is writable, continue the interview without file persistence and say so briefly.
 
+Do not create an empty session folder before the user has a chance to disable saving when the environment allows you to wait. The first actual write can create the folder.
+
 Rules:
 
 - Do not hard-code `~/Documents`, `.codex/skills`, or a platform-specific path.
@@ -40,7 +42,7 @@ Rules:
 
 ## Opening Prompt
 
-After confirming the material and before the first interview question, mention the save location once:
+After confirming the material and before the first interview question, mention the planned save location once:
 
 ```text
 我会把这次访谈记录保存在：
