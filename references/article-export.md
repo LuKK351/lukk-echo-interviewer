@@ -1,0 +1,228 @@
+# Article Export Reference
+
+Use this reference only during the ending stage when the user stops the interview or confirms article export.
+
+Do not load or apply this reference during the normal interview loop. Interview questions must continue to follow `SKILL.md`.
+
+## Role
+
+Article export is an ending-stage output format.
+
+It is not the main task of the skill. It does not change the interview into writing coaching.
+
+Use it to turn what the user already said into a readable article. Do not use it to invent what the user did not say.
+
+## Readiness Check
+
+Offer article export only when all four conditions are true:
+
+- At least one material anchor was explained by the user in their own words.
+- The user expressed at least one original judgment, analogy, objection, boundary, application, or new question.
+- The interview contains a recognizable expression line that can support an article.
+- The article can be supported mainly by the user's words, not by the assistant's reflections.
+
+Do not offer article export when:
+
+- The user mostly repeated the material or the assistant's wording.
+- The user mostly discussed personal situations without tying them back to material anchors.
+- The interview produced only impressions, feelings, or fragments.
+- The article would require adding material anchors the user did not discuss.
+- The article would rely mainly on assistant-written summary.
+
+If not ready, say briefly why. Do not ask follow-up questions. Do not restart the interview.
+
+Example:
+
+> 本轮先停在这里。本次保留暂停点，但不提供文章导出，因为目前主要是材料印象，还没有形成一个能独立站住的用户判断。
+
+## Route Selection
+
+Do not use one fixed article template.
+
+Choose one route from this fixed route library based on the interview result.
+
+### Single-Point Argument
+
+Use when the user clarified one core judgment and gave a reason, analogy, example, or boundary.
+
+Shape:
+
+- Title from the user's core judgment.
+- Open with the material point that triggered the user's judgment.
+- Explain the judgment in the user's language.
+- Add the user's reason, analogy, example, or boundary.
+- End only where the user's thought actually ended.
+
+Do not pretend this covers the whole material.
+
+### Multi-Point Synthesis
+
+Use when the user covered several material anchors and explained their relationship.
+
+Shape:
+
+- Title from the user's overall understanding.
+- Open with the user's map of the material.
+- Organize each touched anchor in the user's logic order.
+- Show the relationship between anchors.
+- End with the user's strongest synthesis or remaining question.
+
+Do not add untouched chapters or concepts.
+
+### Critical Response
+
+Use when the user mainly objected to, revised, or limited the material.
+
+Shape:
+
+- Title from the user's objection or revision.
+- State the material claim only as far as the user discussed it.
+- Present the user's objection.
+- Use the user's reason, example, or boundary.
+- End with the user's correction, condition, or unresolved tension.
+
+Do not turn emotional disagreement into an argument.
+
+### Question-Generating Note
+
+Use when the user did not reach a conclusion but generated meaningful questions from the material.
+
+Shape:
+
+- Title from the strongest question.
+- Open with what in the material produced the question.
+- Group related questions.
+- Explain why each question matters based on what the user said.
+- End without forcing an answer.
+
+No conclusion is better than a fake conclusion.
+
+### Narrative-Anchored Reflection
+
+Use when the material is centered on a person, event, story, controversy, or concrete case.
+
+Shape:
+
+- Title from the user's interpretation of the story or event.
+- Give only the minimum story context the user already mentioned.
+- Present what the user thinks is the key turn.
+- Explain what this story reveals according to the user.
+- End with the user's boundary, misreading warning, or open question.
+
+Do not retell the whole source story unless the user already did.
+
+### Application Note
+
+Use when the user mainly explained how the material applies to a concrete scene.
+
+Shape:
+
+- Title from the user's application judgment.
+- State the material point being applied.
+- Describe the user's concrete scene.
+- Explain how the material helps in that scene.
+- Add any limits or risks the user mentioned.
+
+Do not turn the user's scene into life advice.
+
+## Voice Priority
+
+The user's voice outranks the assistant's style.
+
+Language priority:
+
+1. User's original words.
+2. Light cleanup in the user's voice.
+3. Necessary connecting sentences.
+4. Assistant wording.
+
+The assistant may:
+
+- Reorder material.
+- Remove repetition.
+- Add transitions.
+- Add necessary context.
+- Smooth spoken fragments.
+- Clarify ambiguous references such as "this" or "it".
+
+The assistant must not:
+
+- Invent user opinions.
+- Insert source summary as article body.
+- Replace the user's plain wording with polished AI prose.
+- Turn ordinary user language into slogans.
+- Elevate personal scenes into life lessons.
+- Add new arguments for completeness.
+- Add a conclusion when the user did not reach one.
+
+## Prohibited Contrast Pattern
+
+Do not generate "不是 xxx，而是 xxx" style sentences unless the user used that pattern in their own answer.
+
+Allowed:
+
+- Keep or lightly clean this pattern if it appears in the user's original words.
+
+Forbidden:
+
+- Add "不是……而是……" as an assistant-created rhetorical pattern.
+- Add similar variants such as "并不是……而是……", "真正的不是……而是……", or "核心不是……而是……".
+
+If a contrast is needed, write it plainly without that pattern.
+
+## Output Contract
+
+When the user confirms article export, output two sections.
+
+### Section 1: Article
+
+Start with:
+
+> 这篇文章只基于本轮访谈中你已经说出的内容，不覆盖整份材料。
+
+Then output the article.
+
+Article rules:
+
+- Use a title based on the user's core judgment.
+- Do not title it "读《XX》有感".
+- Do not describe the interview process.
+- Do not include material anchors the user did not discuss.
+- Do not add conclusions the user did not say.
+- Do not include AI advice in the article body.
+
+### Section 2: AI 建议
+
+Use this heading exactly:
+
+## AI 建议
+
+This section may include:
+
+- An example that may be slightly off from the material.
+- A judgment that may not stand strongly yet.
+- A risk if the user publishes the article.
+- Material anchors not covered.
+- Hidden questions worth continuing.
+- External directions worth checking.
+
+Rules:
+
+- Keep this section separate from the article.
+- Do not rewrite AI suggestions back into the article unless the user asks.
+- Use at most five bullets.
+- If using knowledge outside the interview or source material, frame it as "可以考虑", "需要核实", or "可能延伸".
+- For factual, current, legal, medical, financial, or other high-stakes claims, state that verification is needed.
+
+## Failure Modes
+
+The export fails if:
+
+- The article becomes a source-material summary.
+- The article is more complete than what the user actually said.
+- The article sounds like generic AI prose instead of the user.
+- AI advice leaks into the article body.
+- The assistant fills in untouched material anchors.
+- Every interview is forced into the same article route.
+- The ending stage starts asking new interview questions.
+- The article contains assistant-created "不是 xxx，而是 xxx" style sentences.

@@ -1,4 +1,4 @@
 interface:
   display_name: "回声访谈官"
-  short_description: "围绕材料进行一问一答访谈，帮助用户检验理解是否真正内化"
+  short_description: "围绕材料访谈用户检验理解，结束时可按素材导出保留用户口吻的文章"
   default_prompt: "Use $lukk-echo-interviewer to interview me around this material and test what I have internalized."
