@@ -35,6 +35,29 @@ Example:
 
 > 本轮先停在这里。本次保留暂停点，但不提供文章导出，因为目前主要是材料印象，还没有形成一个能独立站住的用户判断。
 
+## Ending Prompt
+
+When the interview is ready for article export, do not expose internal routing labels such as "Single-Point Argument" or "单点论证型".
+
+Do not say:
+
+> 本轮访谈素材已经足够导出一篇文章。它适合走“单点论证型”：主线是……
+
+This sounds like an internal scoring report and may make the user accept the assistant's frame before seeing the article.
+
+Say it as an optional capability after the pause point:
+
+> 上面的访谈内容已经可以整理成一篇小短文：以你刚才说出的理解为原料，保留你的口吻、节奏和例子。需要我现在导出吗？
+
+Prompt rules:
+
+- Mention that article export is optional.
+- Say it uses the user's interview material as raw material.
+- Mention user voice, rhythm, examples, or wording.
+- Do not mention the route type.
+- Do not announce the article's main line.
+- Do not mention "article body + AI advice" in the prompt.
+
 ## Route Selection
 
 Do not use one fixed article template.
@@ -154,6 +177,50 @@ The assistant must not:
 - Elevate personal scenes into life lessons.
 - Add new arguments for completeness.
 - Add a conclusion when the user did not reach one.
+- Translate a vivid user phrase into smoother written prose when the original phrase already works.
+- Add technical failure modes, examples, risks, or concepts that the user did not say.
+
+## Source Traceability
+
+Every substantive sentence in the article must trace back to one of these:
+
+- A user sentence or phrase.
+- A direct, minimal cleanup of a user sentence.
+- A necessary connector that does not add a new claim.
+- A source-material anchor that the user explicitly discussed.
+
+If the assistant can only justify a sentence by saying "this follows from what the user said", keep it out of the article. Put it in `AI 建议` if it is useful.
+
+Before output, run this internal check on each paragraph:
+
+- Which user answer supports this paragraph?
+- Did the user say this, or did I infer it?
+- If I removed assistant-written polish, would the user's point still be visible?
+- Did I add a new example, risk, failure mode, or conclusion?
+
+Delete or move any paragraph that fails this check.
+
+## Anti-Polish Rules
+
+The article should feel like the user's spoken understanding organized on paper, not like an assistant's finished essay.
+
+Prefer:
+
+- User's original short sentence.
+- Slightly cleaned spoken rhythm.
+- Concrete words the user used.
+- A plain ending where the user's thought naturally stops.
+
+Avoid:
+
+- Slogan endings.
+- Symmetric closing lines.
+- Over-complete argument chains.
+- Extra rhetorical questions not asked by the user.
+- Phrases that sound like an article template.
+- Reframing user examples into universal lessons.
+
+If the user says "更灵活这三个字，它没有标准呀", keep that flavor. Do not automatically rewrite it into a polished thesis unless the user asks for polishing.
 
 ## Prohibited Contrast Pattern
 
@@ -167,8 +234,22 @@ Forbidden:
 
 - Add "不是……而是……" as an assistant-created rhetorical pattern.
 - Add similar variants such as "并不是……而是……", "真正的不是……而是……", or "核心不是……而是……".
+- Add variants such as "不只是……更是……", "与其说……不如说……", "不是为了……而是……", or "表面上……本质上……".
 
 If a contrast is needed, write it plainly without that pattern.
+
+Before output, scan the article body for these strings:
+
+- 不是
+- 而是
+- 不只是
+- 更是
+- 与其说
+- 不如说
+- 表面上
+- 本质上
+
+If any appear in assistant-created sentences, rewrite them plainly or remove them.
 
 ## Output Contract
 
@@ -213,6 +294,17 @@ Rules:
 - Use at most five bullets.
 - If using knowledge outside the interview or source material, frame it as "可以考虑", "需要核实", or "可能延伸".
 - For factual, current, legal, medical, financial, or other high-stakes claims, state that verification is needed.
+- Do not build a new conceptual frame for the user.
+- Do not create a new binary question or polished thesis for an untouched anchor.
+- For unfinished anchors, simply name the anchor and why it may be worth returning to.
+
+Good:
+
+> 下一次可以回到材料里的 corrigibility，看它和品格判断之间是什么关系。
+
+Avoid:
+
+> 下一步最值得追的是：corrigibility 到底是外部限制，还是一种阶段性的品格。
 
 ## Failure Modes
 
@@ -226,3 +318,6 @@ The export fails if:
 - Every interview is forced into the same article route.
 - The ending stage starts asking new interview questions.
 - The article contains assistant-created "不是 xxx，而是 xxx" style sentences.
+- The ending prompt exposes internal route labels or announces the article's main line before the user confirms.
+- The article contains technical risks, failure modes, examples, or publishing conclusions that the user did not say.
+- The article ends with assistant-made slogan lines instead of the user's own stopping point.
