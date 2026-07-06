@@ -126,6 +126,8 @@ Do not rewrite user wording into polished assistant language.
 
 Append each completed interview turn to `对谈记录`.
 
+User-facing flow comes first. Give the user the visible echo and next question before doing the file write.
+
 Each turn should include:
 
 - Turn number.
@@ -136,9 +138,22 @@ Each turn should include:
 
 The transcript may lightly clean formatting, but should preserve user wording.
 
+## User-Facing Order
+
+Do not make the user wait for persistence before seeing the next question.
+
+Preferred order after a user answer:
+
+1. Produce the visible interview response: short echo plus one next question.
+2. After that response is visible, update `interview.md`.
+
+If the environment cannot continue file work after showing the next question, do not block the next question. Keep the turn in current context and flush it at the next snapshot point, pause, or end.
+
 ## Write Cadence
 
-Append the completed turn every round when file writing is available.
+Append the completed turn every round when file writing is available and can happen after the visible next question.
+
+If per-turn writing would delay the next question, skip immediate append and batch the write at the next snapshot point.
 
 Update the snapshot when any of these happens:
 
