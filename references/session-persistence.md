@@ -4,6 +4,8 @@ Use this reference whenever an interview starts, resumes, pauses, ends, may exce
 
 Do not let file work dominate the interview. Persistence is a recovery layer, not the user's task.
 
+In clients that collapse tool/process messages, the next interview question must be the final visible response. Never put the user's next question only in a process message that may be collapsed after file writing finishes.
+
 ## Role
 
 Session persistence has three jobs:
@@ -85,6 +87,7 @@ status: "active | paused | ended"
 - 当前锚点：
 - 已覆盖锚点：
 - 尚未触碰锚点：
+- 锚点控制：入口锚点、进入方式、折返次数、冷却/封存状态
 - 追问账本：
 - 用户关键表达：
 - 可用于文章的素材：
@@ -114,6 +117,7 @@ Keep it short and factual:
 - Current anchor: the source anchor being explored now.
 - Covered anchors: anchors already discussed and their depth.
 - Untouched anchors: source anchors that should not be forgotten.
+- Anchor control: entrance anchor, how each anchor entered the interview, repeat/fallback count, and any cooldown or sealed state.
 - Question ledger: what has already been asked.
 - User key expressions: preserve the user's own wording whenever possible.
 - Article material pool: candidate judgments, examples, analogies, boundaries, titles, and open questions.
@@ -124,9 +128,9 @@ Do not rewrite user wording into polished assistant language.
 
 ## Transcript Rules
 
-Append each completed interview turn to `对谈记录`.
+The user-facing question must remain visible after the turn finishes.
 
-User-facing flow comes first. Give the user the visible echo and next question before doing the file write.
+Append completed interview turns to `对谈记录` only at fixed save points. Do not decide based on whether writing seems quick. Persistence must never become a wait state on ordinary interview turns or hide the next question inside a collapsed process area.
 
 Each turn should include:
 
@@ -140,31 +144,39 @@ The transcript may lightly clean formatting, but should preserve user wording.
 
 ## User-Facing Order
 
-Do not make the user wait for persistence before seeing the next question.
+Do not make the user wait for persistence, and do not hide the next question in a collapsed tool/process area.
 
 Preferred order after a user answer:
 
-1. Produce the visible interview response: short echo plus one next question.
-2. After that response is visible, update `interview.md`.
+1. If this is an ordinary interview turn, do not write files. Make the final visible response a short echo plus one next question.
+2. If this turn reaches a fixed save point, update `interview.md` before the final visible response.
+3. After any save, make the final visible response the pause point, recovery point, or one next interview question.
 
-If the environment cannot continue file work after showing the next question, do not block the next question. Keep the turn in current context and flush it at the next snapshot point, pause, or end.
+Do not run file-writing tools after the final next question. In clients like Codex, that can cause the question to be grouped into the processed/tool area and collapse after completion.
 
-## Write Cadence
+If immediate writing is skipped, keep the turn in current context and flush it at the next fixed save point.
 
-Append the completed turn every round when file writing is available and can happen after the visible next question.
+## Fixed Save Points
 
-If per-turn writing would delay the next question, skip immediate append and batch the write at the next snapshot point.
+Final visible continuation outranks per-turn writing.
 
-Update the snapshot when any of these happens:
+Ordinary one-question interview turns do not write files.
+
+Flush pending turns and update the snapshot only when one of these fixed save points happens:
 
 - Every 3 to 5 turns.
 - The interview switches to another material anchor.
+- The user switches to a different source material.
+- An entrance anchor is sealed, cooled down, or hits non-consecutive over-depth.
 - The user says "先到这里", "暂停", "结束", "收尾", or similar.
+- The user explicitly asks to save,整理, output a record, or generate a report.
 - The user gives a long answer that creates multiple article materials.
 - The assistant notices two consecutive turns without returning to the source material.
 - Before judging article export readiness.
 
 Pause and end must flush `interview.md`.
+
+Opening only prepares and announces the planned save location. Do not create an empty folder or write an empty `interview.md` at opening unless a fixed save point has been reached.
 
 Do not tell the user every time the file is updated. Only mention file status at opening, failure, pause, and final export.
 
@@ -185,6 +197,18 @@ After reading, state the recovery point:
 Do not pretend to remember details outside the record. If the file does not contain something, say that the record does not contain it.
 
 If `interview.md` is missing or damaged, say the session cannot be fully recovered and continue only from the current context.
+
+## Switching Materials
+
+When the user switches to a different source material mid-interview:
+
+- Flush the current `interview.md` if file writing is available.
+- Set the current session `status` to `paused`.
+- Return the current material's pause point required by `SKILL.md`.
+- Prepare a new session folder for the new material.
+- Rebuild the material map and coverage ledger from the new material.
+
+Do not mix two different source materials in one `interview.md`. If the user only switches sections, chapters, or anchors inside the same source, keep the same session and treat it as an anchor switch.
 
 ## Pause And End
 
@@ -216,6 +240,14 @@ If file writing is disabled or unavailable, follow `references/article-export.md
 ## Failure Handling
 
 If creating or updating files fails, say what failed in one short sentence, continue the interview, do not keep retrying every round, and use console output at final export if no file can be written.
+
+If file persistence remains unavailable during a long interview, remind the user at most once every five additional turns, preferably at a state refresh point:
+
+```text
+文件保存仍不可用；本轮访谈记录目前只保留在当前对话上下文里。
+```
+
+Do not interrupt ordinary one-question turns just to repeat this warning.
 
 ## Failure Modes
 
