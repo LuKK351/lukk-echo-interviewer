@@ -44,20 +44,53 @@ Rules:
 
 ## Opening Prompt
 
-After confirming the material and before the first interview question, mention the planned save location once:
+After confirming the material and before the first interview question, explain the persistence mechanism once, then mention the planned save location.
+
+The opening explanation should make these points in natural Chinese:
+
+- The record exists because this skill may become a long interview.
+- It preserves material anchors, questions already asked, the user's key wording, and article-ready material.
+- It helps avoid context loss, repeated questions, and drift away from the source material.
+- It also lets the user export an article later, only if the user confirms export.
+- It is not a separate note-taking task, performance evaluation, surveillance, or a promise to publish anything.
+- The user may change the folder or turn saving off.
+- If the user directly answers the first interview question, treat that as consent to use the default save path.
+
+Use this shape, adjusted to the actual material and path:
 
 ```text
-我会把这次访谈记录保存在：
+这次访谈可能会聊得比较长，我会留一份轻量记录。它只做三件事：防止后面忘掉材料里的重点和你已经说清楚的内容；避免重复追问或被某个例子带跑；如果结束时你想导出文章，也能用你的原话和判断做素材。
+
+记录会保存在：
 <session-dir>
 
-它只用于长访谈恢复和结束时导出文章。想换位置或关闭保存，现在告诉我。
+你可以直接回答下面的问题，直接回答就按默认保存继续；如果不想保存，或想换位置，现在告诉我就行。
 ```
 
-If the user disables saving, do not create or update files in this session.
+If the user disables saving, do not create or update files in this session. If the user answers the first interview question without addressing saving, continue with default persistence.
 
 If the user asks to change location and the new location fails, explain the failure and ask whether to use the default folder.
 
 Do not repeat successful-save messages during the interview.
+
+## Save Point Wording
+
+Fixed save points are a recovery mechanism, not a user-facing event.
+
+Do not announce save points with system-process wording, such as:
+
+- "到第三个回答点了"
+- "我会创建这次访谈的运行记录"
+- "已运行命令"
+- "我会把开场到这里的记录刷新到 interview.md"
+
+Usually, save silently before the final visible response. If a transition is needed, use one short human sentence and continue the interview:
+
+```text
+我先把前面这段留个恢复点，然后继续问一个问题。
+```
+
+Do not explain file internals unless the user asks. Do not describe commands, turn counts, or implementation details.
 
 ## User-Visible Files
 
@@ -191,7 +224,7 @@ When continuing an existing interview, first read:
 After reading, state the recovery point:
 
 ```text
-我从记录里恢复到这里：我们已经讲过 <已覆盖锚点>，现在停在 <当前锚点>。接下来我会从 <下一问题方向> 继续。
+我从记录里恢复到这里：我们已经聊过 <已覆盖内容>，上次停在 <当前材料位置>。接下来我会从 <下一问题方向> 继续。
 ```
 
 Do not pretend to remember details outside the record. If the file does not contain something, say that the record does not contain it.
