@@ -21,13 +21,16 @@ Follow this order. If later rules conflict with earlier rules, earlier rules win
 3. Offer export only as an optional capability after the pause point.
 4. State one internal article theme; if there is no clear theme, do not export.
 5. Select material for that theme; do not include every interview answer.
-6. Write with traceable user meaning, clean obvious speech errors, then follow the output contract.
+6. Use source bridges only where they help connect user-discussed anchors.
+7. Write with traceable user meaning, clean obvious speech errors, run the transition audit, then follow the output contract.
 
 Priority stack:
 
 - No invention outranks fluency.
 - Clear article theme outranks covering all user answers.
 - User meaning outranks literal wording.
+- User meaning outranks source-material bridges.
+- Logical transitions outrank preserving interview order.
 - File output outranks console output only when writing works.
 
 ## Readiness Check
@@ -105,6 +108,44 @@ Before writing, sort interview material into three groups:
 If a sentence only exists because "the user said it", delete it. A paragraph must have a job: opening the material trigger, stating the user's judgment, explaining the reason, showing an example, naming a boundary, or ending where the user's thought stops.
 
 Do not preserve interview order by default. Choose the order that makes the user's thought readable.
+
+## Source Bridges
+
+This article is a share about a source material, not a private diary. Source-material context may appear in the article body, but only as a bridge, guide, or locator for the user's already-spoken understanding.
+
+Allowed source bridges:
+
+- Briefly name a source concept the user already discussed.
+- Paraphrase a source point that connects two user claims.
+- Use a short source phrase or term to orient the reader.
+- State the material's local structure when it explains why the next user point follows.
+
+Source bridges must:
+
+- Come only from material anchors covered in the interview.
+- Serve a paragraph-level job: introduce the material trigger, connect two user points, clarify a term, or mark a boundary.
+- Use light attribution such as "材料里说到...", "这份文件把它放在...", or "作者在这里讨论的是...".
+- Stay shorter than the user's own interpretation around it.
+
+Forbidden source use:
+
+- Do not summarize untouched material to make the article feel complete.
+- Do not use source material to add arguments the user did not make.
+- Do not let source material become the article's main voice.
+- Do not turn "the user mentioned a word" into permission to import the whole source section.
+- Do not correct or upgrade the user's view inside the article. Put that in `AI 建议`.
+
+If a source bridge would be doing the real thinking for the user, delete it or move the issue to `AI 建议`.
+
+Bad:
+
+> Helpful 也要这样看。
+
+Good:
+
+> 材料谈 helpfulness 时，并没有把“让用户满意”单独拿出来。它前面还压着安全、伦理和可监督这些约束。放到这里，我的理解是：真正的帮助不能只是顺着用户心意走。
+
+The good version works because it uses the material's discussed structure to bridge into the user's judgment. It does not add a new claim for the user.
 
 ### Single-Point Argument
 
@@ -208,6 +249,7 @@ The assistant may:
 - Remove repetition.
 - Add transitions.
 - Add necessary context.
+- Add source bridges under `Source Bridges`.
 - Smooth spoken fragments.
 - Clarify ambiguous references such as "this" or "it".
 - Correct obvious typos, speech-to-text artifacts, duplicated words, false starts, and malformed phrases.
@@ -216,7 +258,7 @@ The assistant may:
 The assistant must not:
 
 - Invent user opinions.
-- Insert source summary as article body.
+- Insert source summary as article body without a bridge, guide, or locator job.
 - Replace the user's plain wording with polished AI prose.
 - Turn ordinary user language into slogans.
 - Elevate personal scenes into life lessons.
@@ -254,7 +296,7 @@ Every substantive sentence in the article must trace back to one of these:
 - A user sentence or phrase.
 - A direct, minimal cleanup of a user sentence.
 - A necessary connector that does not add a new claim.
-- A source-material anchor that the user explicitly discussed.
+- A source-material bridge that follows `Source Bridges`.
 
 If the assistant can only justify a sentence by saying "this follows from what the user said", keep it out of the article. Put it in `AI 建议` if it is useful.
 
@@ -264,11 +306,41 @@ Before output, run this internal check on each paragraph:
 
 - Which user answer supports this paragraph?
 - What job does this paragraph do for the article theme?
+- What is its logical relation to the previous paragraph?
 - Did the user say this, or did I infer it?
+- If it uses source material, did the user explicitly discuss this anchor?
 - If I removed assistant-written polish, would the user's point still be visible?
 - Did I add a new example, risk, failure mode, or conclusion?
 
 Delete or move any paragraph that fails this check.
+
+## Transition Audit
+
+Before output, scan every paragraph boundary.
+
+Each adjacent pair must have at least one clear relation:
+
+- progression: the next paragraph follows from the previous one.
+- contrast: the next paragraph names a tension or limit.
+- concretization: the next paragraph gives a case, term, or boundary.
+- source structure: the source material links both anchors and the user discussed both.
+
+If the relation is unclear, do one of these:
+
+- Add a source bridge if the bridge is allowed.
+- Rewrite the opening sentence of the next paragraph.
+- Add a small heading when the article legitimately shifts to a parallel point.
+- Delete or move the paragraph to `AI 建议` if it only exists because it was in the interview.
+
+Do not use empty transition phrases to hide a missing relation:
+
+- "也要这样看"
+- "所以"
+- "另一个点是"
+- "这也说明"
+- "回到..."
+
+These phrases are allowed only when the actual relation is stated in the same sentence or immediately before it.
 
 ## Anti-Polish Rules
 
@@ -360,7 +432,7 @@ material_scope: "<只覆盖本轮访谈 / 覆盖整个会话>"
 
 # <文章标题>
 
-> 这篇文章只基于本轮访谈中你已经说出的内容，不覆盖整份材料。
+> 这篇文章以本轮访谈中你已经说出的理解为主，只引用或转述已经谈到的材料内容。
 
 <文章正文>
 
@@ -377,7 +449,7 @@ When writing to file is not available, output two sections in the console.
 
 First, start with:
 
-> 这篇文章只基于本轮访谈中你已经说出的内容，不覆盖整份材料。
+> 这篇文章以本轮访谈中你已经说出的理解为主，只引用或转述已经谈到的材料内容。
 
 Then output the article.
 
@@ -388,6 +460,7 @@ Article rules:
 - Do not title it "读《XX》有感".
 - Do not describe the interview process.
 - Do not include material anchors the user did not discuss.
+- Use source bridges only for material anchors the user discussed.
 - Do not include all user statements by default.
 - Do not preserve confusing oral fragments, typos, or voice-input artifacts.
 - Do not add conclusions the user did not say.
@@ -434,6 +507,9 @@ The export fails if:
 - The article becomes a source-material summary.
 - The article is more complete than what the user actually said.
 - The article sounds like generic AI prose instead of the user.
+- The article uses source bridges to create claims the user did not make.
+- The article jumps between paragraphs with empty transitions such as "也要这样看" or unsupported "所以".
+- A paragraph only changes topic without showing progression, contrast, concretization, or source structure.
 - AI advice leaks into the article body.
 - The assistant fills in untouched material anchors.
 - Every interview is forced into the same article route.

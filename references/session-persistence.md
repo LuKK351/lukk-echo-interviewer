@@ -75,7 +75,7 @@ Do not repeat successful-save messages during the interview.
 
 ## Save Point Wording
 
-Fixed save points are a recovery mechanism, not a user-facing event.
+Fixed save points are a recovery mechanism, not a user-facing event. The first actual record write is the exception: if the client shows file activity, the user needs one light explanation.
 
 Do not announce save points with system-process wording, such as:
 
@@ -84,13 +84,21 @@ Do not announce save points with system-process wording, such as:
 - "已运行命令"
 - "我会把开场到这里的记录刷新到 interview.md"
 
-Usually, save silently before the final visible response. If a transition is needed, use one short human sentence and continue the interview:
+On the first actual write that creates or materially starts `interview.md`, do not stay silent. After the write finishes, start the final visible response with one short sentence:
+
+```text
+我已经把前面这几轮留了恢复点，后面就不反复提醒了。
+```
+
+Then continue with the normal echo and one next question.
+
+For later fixed save points, usually save silently before the final visible response. If a transition is needed, use one short human sentence and continue the interview:
 
 ```text
 我先把前面这段留个恢复点，然后继续问一个问题。
 ```
 
-Do not explain file internals unless the user asks. Do not describe commands, turn counts, or implementation details.
+Do not explain file internals unless the user asks. Do not describe commands, turn counts, or implementation details. Do not repeat the first-write explanation after every save.
 
 ## User-Visible Files
 
