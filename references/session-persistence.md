@@ -1,62 +1,81 @@
-# Session Persistence Reference
+# 会话持久化参考
 
-Use this reference whenever an interview starts, resumes, pauses, ends, may exceed short context, or involves save/export requests.
+在访谈开始、恢复、暂停、结束、可能进入长访谈，或用户提出保存、整理、导出请求时，使用本文件。
 
-Do not let file work dominate the interview. Persistence is a recovery layer, not the user's task.
+文件记录是恢复层，不是用户的任务。不要让写文件、报路径、刷状态压过访谈本身。
 
-In clients that collapse tool/process messages, the next interview question must be the final visible response. Never put the user's next question only in a process message that may be collapsed after file writing finishes.
+在会折叠工具或处理过程的客户端里，下一轮访谈问题必须作为最终可见回复出现。不要把用户要回答的问题只放在可能被折叠的过程消息里。
 
-## Role
+## 目录
 
-Session persistence has three jobs:
+- 作用
+- 默认文件夹
+- 开场提示
+- 保存点措辞
+- 用户可见文件
+- `interview.md` 结构
+- 状态快照规则
+- 对谈记录规则
+- 用户可见顺序
+- 固定保存点
+- 恢复访谈
+- 切换材料
+- 暂停与结束
+- 文章导出交接
+- 失败处理
+- 失败形态
 
-- Preserve enough context for long interviews.
-- Keep the interview anchored to the material instead of drifting into the user's life story.
-- Provide a reliable source for ending-stage article export.
+## 作用
 
-It is not a note-taking product, writing workflow, or separate report format.
+会话持久化只做三件事：
 
-## Default Folder
+- 为长访谈保留足够上下文。
+- 让访谈持续锚在材料上，而不是滑向用户的人生故事。
+- 为结束阶段的文章导出提供可靠素材来源。
 
-When local file writing is available, prepare one session folder path by default:
+它不是笔记产品、写作流程或单独报告格式。
+
+## 默认文件夹
+
+当本地文件写入可用时，默认准备一个会话文件夹：
 
 ```text
 ./lukk-echo-sessions/YYYY-MM-DD-HHMM-<material-slug>/
 ```
 
-If the current working directory is not writable, use:
+如果当前工作目录不可写，使用：
 
 ```text
 $HOME/lukk-echo-sessions/YYYY-MM-DD-HHMM-<material-slug>/
 ```
 
-If neither location is writable, continue the interview without file persistence and say so briefly.
+如果两个位置都不可写，继续访谈，不启用文件持久化，并简短说明。
 
-Do not create an empty session folder before the user has a chance to disable saving when the environment allows you to wait. The first actual write can create the folder.
+在环境允许等待用户回应时，不要在用户有机会关闭保存前创建空会话文件夹。第一次真实写入可以创建文件夹。
 
-Rules:
+规则：
 
-- Do not hard-code `~/Documents`, `.codex/skills`, or a platform-specific path.
-- Do not write to a hidden directory by default.
-- Derive `<material-slug>` from the source title or filename.
-- If no title or filename is available, use `untitled-material`.
-- If the user gives a preferred folder, use it only if it is writable.
+- 不要硬编码 `~/Documents`、`.codex/skills` 或任何平台特定路径。
+- 默认不要写入隐藏目录。
+- `<material-slug>` 从材料标题或文件名生成。
+- 如果没有标题或文件名，使用 `untitled-material`。
+- 如果用户指定保存位置，只在该位置可写时使用。
 
-## Opening Prompt
+## 开场提示
 
-After confirming the material and before the first interview question, explain the persistence mechanism once, then mention the planned save location.
+确认材料后、提出第一个访谈问题前，先用自然中文解释一次记录机制，再说明计划保存位置。
 
-The opening explanation should make these points in natural Chinese:
+开场解释要说清楚：
 
-- The record exists because this skill may become a long interview.
-- It preserves material anchors, questions already asked, the user's key wording, and article-ready material.
-- It helps avoid context loss, repeated questions, and drift away from the source material.
-- It also lets the user export an article later, only if the user confirms export.
-- It is not a separate note-taking task, performance evaluation, surveillance, or a promise to publish anything.
-- The user may change the folder or turn saving off.
-- If the user directly answers the first interview question, treat that as consent to use the default save path.
+- 记录存在，是因为这类访谈可能变长。
+- 它会保留材料位置、已问问题、用户关键原话和可用于文章的素材。
+- 它用于避免上下文丢失、重复追问，以及被某个例子带离原材料。
+- 它也方便结束时在用户确认后导出文章。
+- 它不是额外笔记任务、表现评价、监控，也不是发布承诺。
+- 用户可以换文件夹，也可以关闭保存。
+- 如果用户直接回答第一个访谈问题，视为同意按默认位置继续保存。
 
-Use this shape, adjusted to the actual material and path:
+可以使用这个形状，并按实际材料和路径调整：
 
 ```text
 这次访谈可能会聊得比较长，我会留一份轻量记录。它只做三件事：防止后面忘掉材料里的重点和你已经说清楚的内容；避免重复追问或被某个例子带跑；如果结束时你想导出文章，也能用你的原话和判断做素材。
@@ -67,48 +86,53 @@ Use this shape, adjusted to the actual material and path:
 你可以直接回答下面的问题，直接回答就按默认保存继续；如果不想保存，或想换位置，现在告诉我就行。
 ```
 
-If the user disables saving, do not create or update files in this session. If the user answers the first interview question without addressing saving, continue with default persistence.
+如果用户关闭保存，本轮访谈不要创建或更新任何文件。
 
-If the user asks to change location and the new location fails, explain the failure and ask whether to use the default folder.
+如果用户没有回应保存设置、直接回答第一个访谈问题，按默认保存继续。
 
-Do not repeat successful-save messages during the interview.
+如果用户要求换位置，但新位置不可写，说明失败原因，并询问是否使用默认文件夹。
 
-## Save Point Wording
+访谈中不要反复报告保存成功。
 
-Fixed save points are a recovery mechanism, not a user-facing event. The first actual record write is the exception: if the client shows file activity, the user needs one light explanation.
+## 保存点措辞
 
-Do not announce save points with system-process wording, such as:
+固定保存点是恢复机制，不是用户可见事件。第一次真实落记录是例外：如果客户端会显示文件动作，用户需要一句轻说明。
 
-- "到第三个回答点了"
-- "我会创建这次访谈的运行记录"
-- "已运行命令"
-- "我会把开场到这里的记录刷新到 interview.md"
+不要用系统流程话宣布保存点，例如：
 
-On the first actual write that creates or materially starts `interview.md`, do not stay silent. After the write finishes, start the final visible response with one short sentence:
+- “到第三个回答点了”
+- “我会创建这次访谈的运行记录”
+- “已运行命令”
+- “我会把开场到这里的记录刷新到 interview.md”
+
+第一次真实创建或实质启动 `interview.md` 时，不要沉默。写入完成后，最终可见回复开头用一句轻说明：
 
 ```text
 我已经把前面这几轮留了恢复点，后面就不反复提醒了。
 ```
 
-Then continue with the normal echo and one next question.
+然后继续正常照回和提出一个下一问。
 
-For later fixed save points, usually save silently before the final visible response. If a transition is needed, use one short human sentence and continue the interview:
+后续固定保存点通常在最终可见回复前安静保存。如果确实需要过渡，只用一句人话，并继续访谈：
 
 ```text
 我先把前面这段留个恢复点，然后继续问一个问题。
 ```
 
-Do not explain file internals unless the user asks. Do not describe commands, turn counts, or implementation details. Do not repeat the first-write explanation after every save.
+除非用户询问，不解释文件内部结构。不要描述命令、轮次数或实现细节。不要每次保存都重复第一次写入说明。
 
-## User-Visible Files
+## 用户可见文件
 
-The session folder should contain at most two user-facing files: `interview.md` as the running interview record and recovery anchor, and `article.md` only after confirmed article export.
+会话文件夹最多包含两个用户可见文件：
 
-Do not expose extra state files as user-facing deliverables.
+- `interview.md`：运行中的访谈记录和恢复锚点。
+- `article.md`：只在用户确认文章导出后生成。
 
-## interview.md Shape
+不要把额外状态文件暴露成用户交付物。
 
-Create or update `interview.md` with this shape:
+## `interview.md` 结构
+
+创建或更新 `interview.md` 时使用这个结构：
 
 ```markdown
 ---
@@ -125,11 +149,11 @@ status: "active | paused | ended"
 ## 状态快照
 
 - 材料地图：
-- 当前锚点：
-- 已覆盖锚点：
-- 尚未触碰锚点：
-- 锚点控制：入口锚点、进入方式、折返次数、冷却/封存状态
-- 追问账本：
+- 现在正在看的材料位置：
+- 已经聊过的材料部分：
+- 还没展开的材料部分：
+- 防绕圈记录：入口例子、进入方式、AI 主动折返次数、是否已经暂时放下
+- 已问问题：
 - 用户关键表达：
 - 可用于文章的素材：
 - 需要谨慎处理的点：
@@ -137,9 +161,9 @@ status: "active | paused | ended"
 
 ## 对谈记录
 
-### Turn 1
+### 第 1 轮
 
-材料锚点：
+对应材料位置：
 
 AI 问题：
 
@@ -148,155 +172,160 @@ AI 问题：
 AI 回声：
 ```
 
-## Snapshot Rules
+这些字段名是用户可能看到的字段名，必须使用自然中文。内部可以把它们理解为锚点、账本和状态，但不要把可见字段名改回内部术语。
 
-The snapshot is for recovery, not for a polished summary.
+## 状态快照规则
 
-Keep it short and factual:
+状态快照用于恢复访谈，不是润色后的总结。
 
-- Material map: the source's main sections, claims, concepts, or scenes.
-- Current anchor: the source anchor being explored now.
-- Covered anchors: anchors already discussed and their depth.
-- Untouched anchors: source anchors that should not be forgotten.
-- Anchor control: entrance anchor, how each anchor entered the interview, repeat/fallback count, and any cooldown or sealed state.
-- Question ledger: what has already been asked.
-- User key expressions: preserve the user's own wording whenever possible.
-- Article material pool: candidate judgments, examples, analogies, boundaries, titles, and open questions.
-- Caution points: overextended analogies, weak evidence, unclear concepts, or places where AI should not overclaim.
-- Next natural question: one concrete continuation question.
+保持短、事实化：
 
-Do not rewrite user wording into polished assistant language.
+- 材料地图：材料的主要章节、主张、概念、场景或问题线。
+- 现在正在看的材料位置：当前正在追问的材料部分。
+- 已经聊过的材料部分：已经触碰过的材料部分和理解深度。
+- 还没展开的材料部分：后续不能忘掉的材料部分。
+- 防绕圈记录：入口例子、每个材料部分的进入方式、AI 主动折返次数、是否已经暂时放下。
+- 已问问题：已经问过的问题。
+- 用户关键表达：尽量保留用户原话。
+- 可用于文章的素材：用户判断、例子、类比、边界、标题感、开放问题。
+- 需要谨慎处理的点：过度延伸的类比、证据不足的判断、未说清的概念、AI 不应替用户下结论的地方。
+- 下一步最自然的问题：一个具体的继续问题。
 
-## Transcript Rules
+不要把用户原话改写成助理的漂亮总结。
 
-The user-facing question must remain visible after the turn finishes.
+状态快照是计数依据。如果某个材料点的折返次数或暂时放下状态没有写进 `interview.md`，后续不要假装知道精确数字；一旦发现访谈开始绕回已经讲清楚的点，就定性切走。
 
-Append completed interview turns to `对谈记录` only at fixed save points. Do not decide based on whether writing seems quick. Persistence must never become a wait state on ordinary interview turns or hide the next question inside a collapsed process area.
+## 对谈记录规则
 
-Each turn should include:
+用户要回答的问题必须在本轮结束后仍然可见。
 
-- Turn number.
-- Material anchor.
-- AI question.
-- User answer.
-- Short AI echo or continuation note, only if useful for recovery.
+只在固定保存点把已完成的访谈轮次追加到 `对谈记录`。不要根据“这次写入看起来快不快”自行决定写入。持久化不能让普通访谈轮变成等待文件写入，也不能把下一问藏进被折叠的处理区域。
 
-The transcript may lightly clean formatting, but should preserve user wording.
+每一轮记录包含：
 
-## User-Facing Order
+- 轮次编号。
+- 对应材料位置。
+- AI 问题。
+- 用户回答。
+- 简短 AI 回声或继续说明，只在恢复访谈有帮助时写。
 
-Do not make the user wait for persistence, and do not hide the next question in a collapsed tool/process area.
+对谈记录可以轻微整理格式，但要保留用户措辞。
 
-Preferred order after a user answer:
+## 用户可见顺序
 
-1. If this is an ordinary interview turn, do not write files. Make the final visible response a short echo plus one next question.
-2. If this turn reaches a fixed save point, update `interview.md` before the final visible response.
-3. After any save, make the final visible response the pause point, recovery point, or one next interview question.
+不要让用户等文件持久化，也不要让下一问被折叠进工具或处理过程里。
 
-Do not run file-writing tools after the final next question. In clients like Codex, that can cause the question to be grouped into the processed/tool area and collapse after completion.
+用户回答后的优先顺序：
 
-If immediate writing is skipped, keep the turn in current context and flush it at the next fixed save point.
+1. 如果这是普通访谈轮，不写文件；最终可见回复是一个短照回加一个下一问。
+2. 如果这一轮到达固定保存点，先更新 `interview.md`，再输出最终可见回复。
+3. 保存之后，最终可见回复必须是暂停点、恢复点或一个下一轮访谈问题。
 
-## Fixed Save Points
+不要在最终下一问之后再运行写文件工具。在 Codex 这类客户端里，这可能让问题被归入处理区域，并在完成后被折叠。
 
-Final visible continuation outranks per-turn writing.
+如果本轮跳过即时写入，把本轮内容留在当前上下文里，到下一个固定保存点再刷新。
 
-Ordinary one-question interview turns do not write files.
+## 固定保存点
 
-Flush pending turns and update the snapshot only when one of these fixed save points happens:
+最终可见的访谈延续优先于逐轮写文件。
 
-- Every 3 to 5 turns.
-- The interview switches to another material anchor.
-- The user switches to a different source material.
-- An entrance anchor is sealed, cooled down, or hits non-consecutive over-depth.
-- The user says "先到这里", "暂停", "结束", "收尾", or similar.
-- The user explicitly asks to save,整理, output a record, or generate a report.
-- The user gives a long answer that creates multiple article materials.
-- The assistant notices two consecutive turns without returning to the source material.
-- Before judging article export readiness.
+普通一问一答轮不写文件。
 
-Pause and end must flush `interview.md`.
+只有出现以下固定保存点时，才刷新待写入轮次和状态快照：
 
-Opening only prepares and announces the planned save location. Do not create an empty folder or write an empty `interview.md` at opening unless a fixed save point has been reached.
+- 每 4 个完整用户回答。
+- 访谈切换到另一个材料位置。
+- 用户切换到另一份材料。
+- 入口例子被暂时放下、进入冷却，或命中非连续过深。
+- 用户说“先到这里”“暂停”“结束”“收尾”等。
+- 用户明确要求保存、整理、输出记录或生成报告。
+- AI 发现连续两轮没有回到原材料。
+- 判断文章导出是否足够之前。
 
-Do not tell the user every time the file is updated. Only mention file status at opening, failure, pause, and final export.
+暂停和结束必须刷新 `interview.md`。
 
-## Recovery
+开场阶段只准备并说明计划保存位置。除非已经到达固定保存点，不要创建空文件夹或写入空的 `interview.md`。
 
-When continuing an existing interview, first read:
+不要每次文件更新都告诉用户。只在开场、失败、暂停和最终导出时提文件状态。
 
-1. `interview.md` status snapshot.
-2. The latest five turns.
-3. Earlier key expressions or article material only if needed.
+## 恢复访谈
 
-After reading, state the recovery point:
+继续一个已有访谈时，先读取：
+
+1. `interview.md` 的状态快照。
+2. 最近五轮对谈。
+3. 更早的关键表达或文章素材，只在需要时读取。
+
+读取后说明恢复点：
 
 ```text
 我从记录里恢复到这里：我们已经聊过 <已覆盖内容>，上次停在 <当前材料位置>。接下来我会从 <下一问题方向> 继续。
 ```
 
-Do not pretend to remember details outside the record. If the file does not contain something, say that the record does not contain it.
+不要假装记得记录里没有的细节。如果文件没有包含某个信息，就说明记录里没有。
 
-If `interview.md` is missing or damaged, say the session cannot be fully recovered and continue only from the current context.
+如果 `interview.md` 缺失或损坏，说明无法完整恢复，只根据当前上下文继续。
 
-## Switching Materials
+恢复访谈本身不是固定保存点。只读记录、说明恢复点并继续；等后续出现固定保存点时，再刷新 `interview.md`。除非用户明确要求保存，或需要修复损坏记录，否则不要只为了恢复而写入文件。
 
-When the user switches to a different source material mid-interview:
+## 切换材料
 
-- Flush the current `interview.md` if file writing is available.
-- Set the current session `status` to `paused`.
-- Return the current material's pause point required by `SKILL.md`.
-- Prepare a new session folder for the new material.
-- Rebuild the material map and coverage ledger from the new material.
+用户在访谈中途切换到另一份材料时：
 
-Do not mix two different source materials in one `interview.md`. If the user only switches sections, chapters, or anchors inside the same source, keep the same session and treat it as an anchor switch.
+- 如果文件写入可用，先刷新当前 `interview.md`。
+- 把当前会话 `status` 设为 `paused`。
+- 按 `SKILL.md` 要求输出当前材料的暂停点。
+- 为新材料准备新的会话文件夹。
+- 基于新材料重新建立材料地图和覆盖记录。
 
-## Pause And End
+不要把两份不同来源材料混进同一个 `interview.md`。如果用户只是在同一材料里切换章节、段落或材料位置，继续使用同一个会话，把它当作材料位置切换。
 
-When the user pauses or ends:
+## 暂停与结束
 
-- Flush `interview.md`.
-- Set `status` to `paused` or `ended`.
-- Return the normal pause point required by `SKILL.md`.
-- If article export is ready, mention the optional export capability after the pause point.
-- If article export is not ready, say briefly that the record is saved and no article export is started.
+用户暂停或结束时：
 
-Example when not ready:
+- 刷新 `interview.md`。
+- 把 `status` 设为 `paused` 或 `ended`。
+- 返回 `SKILL.md` 要求的正常暂停点。
+- 如果文章导出条件足够，在暂停点之后提到可选导出能力。
+- 如果文章导出条件不足，简短说明记录已保存，不启动文章导出。
+
+素材不足时可以这样说：
 
 ```text
 这次素材还不够形成一篇完整小短文，我就不启动导出。记录已经保存在 <interview.md>，下次可以接着问。
 ```
 
-## Article Export Handoff
+## 文章导出交接
 
-When the user confirms article export:
+用户确认文章导出时：
 
-- Read `references/article-export.md`.
-- Use `interview.md` as the source record when it exists.
-- Write `article.md` in the active session folder when file writing is available.
-- Return file paths instead of printing the whole article.
+- 读取 `references/article-export.md`。
+- 如果存在 `interview.md`，把它作为来源记录。
+- 文件写入可用时，在当前会话文件夹写入 `article.md`。
+- 控制台返回文件路径，不默认打印全文。
 
-If file writing is disabled or unavailable, follow `references/article-export.md` console fallback.
+如果文件写入被关闭或不可用，按 `references/article-export.md` 的控制台降级方式处理。
 
-## Failure Handling
+## 失败处理
 
-If creating or updating files fails, say what failed in one short sentence, continue the interview, do not keep retrying every round, and use console output at final export if no file can be written.
+如果创建或更新文件失败，用一句短话说明失败内容，继续访谈，不要每轮重试；最终导出时如果仍无法写文件，再改为控制台输出。
 
-If file persistence remains unavailable during a long interview, remind the user at most once every five additional turns, preferably at a state refresh point:
+如果长访谈中文件持久化一直不可用，最多每额外五轮提醒一次，最好放在状态刷新点：
 
 ```text
 文件保存仍不可用；本轮访谈记录目前只保留在当前对话上下文里。
 ```
 
-Do not interrupt ordinary one-question turns just to repeat this warning.
+不要为了重复这个警告打断普通一问一答轮。
 
-## Failure Modes
+## 失败形态
 
-The persistence layer fails if:
+持久化层失败的典型表现：
 
-- It interrupts the interview with frequent file-status updates.
-- The snapshot becomes a polished summary that overrides user wording.
-- The record tracks only personal examples and loses material anchors.
-- The assistant pretends to remember content not present in `interview.md`.
-- File failure is hidden from the user.
-- Ending-stage article export uses assistant summaries instead of user words.
+- 用频繁的文件状态更新打断访谈。
+- 状态快照变成润色总结，覆盖了用户原话。
+- 记录只追踪个人例子，丢掉材料位置。
+- AI 假装记得 `interview.md` 里没有的内容。
+- 文件失败被隐藏，不告诉用户。
+- 结束阶段的文章导出使用 AI 总结，而不是用户原话和判断。

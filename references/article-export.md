@@ -1,414 +1,218 @@
-# Article Export Reference
+# 文章导出参考
 
-Use this reference only during the ending stage when the user stops the interview or confirms article export.
+只在结束阶段使用本文件：用户已经停止访谈、要求收尾，或已经确认需要导出文章。
 
-Do not load or apply this reference during the normal interview loop. Interview questions must continue to follow `SKILL.md`.
+正常访谈循环中不要加载或执行本文件。访谈提问继续遵守 `SKILL.md`。
 
-## Role
+## 核心任务
 
-Article export is an ending-stage output format.
+文章导出是结束阶段的可选出口。
 
-It is not the main task of the skill. It does not change the interview into writing coaching.
+它的任务是把用户在访谈里说出的理解，整理成一篇读者能读下去的文章。它不是访谈纪要，不是原材料总结，也不是写作辅导。
 
-Use it to turn what the user already said into a readable article. Do not use it to invent what the user did not say.
+文章应该像“用户已经说出口的理解被组织成了一篇文章”：读者没有听过访谈也能进入；文章仍然属于用户；必要时用已经谈到的原材料做最小上下文。
 
-## Execution Order
+## 优先级
 
-Follow this order. If later rules conflict with earlier rules, earlier rules win.
+规则冲突时，按这个顺序判断：
 
-1. Confirm this is the ending stage; never use article export during normal interview.
-2. Run readiness check; if not ready, stop with a brief reason and do not ask more questions.
-3. Offer export only as an optional capability after the pause point.
-4. State one internal article theme; if there is no clear theme, do not export.
-5. Select material for that theme; do not include every interview answer.
-6. Use source bridges only where they help connect user-discussed anchors.
-7. Write with traceable user meaning, clean obvious speech errors, run the transition audit, then follow the output contract.
+1. 不发明用户观点。
+2. 文章要写给读者看。
+3. 文章必须有清楚的用户主线。
+4. 保留用户口吻和关键表达。
+5. 原材料只做最小上下文。
+6. 清理口误、整理语言、写入文件。
 
-Priority stack:
+如果为了让文章顺畅，必须替用户补出一个他没说过的判断，就不要导出文章；或者把这个点放进 `AI 建议`。
 
-- No invention outranks fluency.
-- Clear article theme outranks covering all user answers.
-- User meaning outranks literal wording.
-- User meaning outranks source-material bridges.
-- Logical transitions outrank preserving interview order.
-- File output outranks console output only when writing works.
+## 结束判断
 
-## Readiness Check
+在提示文章导出前，先做素材足够性判断。
 
-Offer article export only when all four conditions are true:
+只有同时满足这些条件，才提示文章导出：
 
-- At least one material anchor was explained by the user in their own words.
-- The user expressed at least one original judgment, analogy, objection, boundary, application, or new question.
-- The interview contains a recognizable expression line that can be stated as one clear article theme.
-- The article can be supported mainly by the user's words, not by the assistant's reflections.
+- 用户已经用自己的话解释过至少一个材料点。
+- 用户说出过至少一个判断、边界、类比、反驳、应用或新问题。
+- 能用一句话说出这篇文章要抵达的用户主线。
+- 文章主要能由用户自己的话支撑，原材料只需要做辅助。
 
-Do not offer article export when:
+不要提示文章导出的情况：
 
-- The user mostly repeated the material or the assistant's wording.
-- The user mostly discussed personal situations without tying them back to material anchors.
-- The interview produced only impressions, feelings, or fragments.
-- The available material can only be turned into a chronological interview recap.
-- The assistant cannot state the article's theme in one plain sentence before writing.
-- The article would require adding material anchors the user did not discuss.
-- The article would rely mainly on assistant-written summary.
+- 用户主要是在复述原文或复述 AI 的话。
+- 用户主要在讲个人经历，但没有拉回材料。
+- 当前素材只是印象、碎片，或只能整理成访谈流水账。
+- 要写成文章就必须补很多用户没有谈到的材料点。
 
-If not ready, say briefly why. Do not ask follow-up questions. Do not restart the interview.
+如果素材不够，简短停止，不要补问：
 
-Example:
+> 本轮先停在这里。本次保留暂停点，但不提供文章导出，因为目前还没有形成一个能独立站住的用户判断。
 
-> 本轮先停在这里。本次保留暂停点，但不提供文章导出，因为目前主要是材料印象，还没有形成一个能独立站住的用户判断。
+## 结束提示
 
-## Ending Prompt
+素材足够时，只在暂停点之后自然提示文章导出。
 
-When the interview is ready for article export, do not expose internal routing labels such as "Single-Point Argument" or "单点论证型".
+不要暴露内部路线、文章类型、素材评分或预设主线。
 
-Do not say:
-
-> 本轮访谈素材已经足够导出一篇文章。它适合走“单点论证型”：主线是……
-
-This sounds like an internal scoring report and may make the user accept the assistant's frame before seeing the article.
-
-Say it as an optional capability after the pause point:
+可以这样说：
 
 > 上面的访谈内容已经可以整理成一篇小短文：以你刚才说出的理解为原料，保留你的口吻和关键表达，同时做必要的整理。需要我现在导出吗？
 
-Prompt rules:
+提示时不要说会输出 `文章正文 + AI 建议`。
 
-- Mention that article export is optional.
-- Say it uses the user's interview material as raw material.
-- Mention user voice, key expressions, examples, or necessary editing.
-- Do not mention the route type.
-- Do not announce the article's main line.
-- Do not mention "article body + AI advice" in the prompt.
+## 导出流程
 
-## Route Selection
+用户确认导出后，按这个顺序执行。
 
-Do not use one fixed article template.
+### 1. 先做文章计划
 
-Choose one route from this fixed route library based on the interview result.
+写任何正文段落之前，先在内部写出：
 
-Before choosing a route, write one internal sentence:
+```text
+读者入口：<读者为什么要进入这篇文章>
+文章去向：<文章要抵达的用户判断、边界或问题>
+推进路径：<每一段如何把读者从入口带到去向>
+```
 
-> This article is about: <one clear user-owned theme>.
+如果不能在不发明用户观点的情况下写出这个计划，就不要写文章。说明当前素材还没有组织成文章的程度。
 
-If that sentence cannot be written plainly, do not export an article. Keep the pause point and say the material is not yet organized enough for an article.
+### 2. 筛选素材
 
-## Selection Over Coverage
+把访谈材料分成三类：
 
-The article is not a transcript, recap, or complete stitching of every user answer.
+- 核心：必须进入正文，因为它支撑文章去向。
+- 支撑：可以进入正文，如果它能帮助读者理解。
+- 放下：真实但重复、跑题、太碎，或更适合放进 `AI 建议`。
 
-Use only the material that serves the article theme. It is correct to omit user statements that are true but do not help the article stand up.
+不要默认保留访谈顺序。不要因为“用户说过”就把一句话放进正文。
 
-Before writing, sort interview material into three groups:
+### 3. 补最小原材料上下文
 
-- Core: must appear because it carries the theme.
-- Support: may appear if it clarifies the theme.
-- Left out: true but not needed, repetitive, too fragmentary, or only useful for `AI 建议`.
+原材料上下文只有一个作用：
 
-If a sentence only exists because "the user said it", delete it. A paragraph must have a job: opening the material trigger, stating the user's judgment, explaining the reason, showing an example, naming a boundary, or ending where the user's thought stops.
+> 防止普通读者在这里卡住。
 
-Do not preserve interview order by default. Choose the order that makes the user's thought readable.
+判断标准：
 
-## Source Bridges
+- 如果不解释某个材料术语、角色或局部观点，读者就读不懂用户判断，可以补一句。
+- 如果补材料只是让文章显得更完整，不补。
+- 如果这句材料说明开始替用户完成思考，删掉，或放进 `AI 建议`。
 
-This article is a share about a source material, not a private diary. Source-material context may appear in the article body, but only as a bridge, guide, or locator for the user's already-spoken understanding.
+常见需要最小定义的对象包括：材料中承重但读者陌生的角色、术语、层级名称、缩写、制度安排或关键比喻。
 
-Allowed source bridges:
+原材料上下文必须短、局部、有来源感，并且只能来自用户已经谈到的材料点。
 
-- Briefly name a source concept the user already discussed.
-- Paraphrase a source point that connects two user claims.
-- Use a short source phrase or term to orient the reader.
-- State the material's local structure when it explains why the next user point follows.
+好例子：
 
-Source bridges must:
+> 材料里有一个三方关系：制定方向的一方、具体执行或管理的一方、直接使用的一方。我的理解是，不能因为某一方看起来更权威，就把它当成百分之百可信的命令源。
 
-- Come only from material anchors covered in the interview.
-- Serve a paragraph-level job: introduce the material trigger, connect two user points, clarify a term, or mark a boundary.
-- Use light attribution such as "材料里说到...", "这份文件把它放在...", or "作者在这里讨论的是...".
-- Stay shorter than the user's own interpretation around it.
+坏例子：
 
-Forbidden source use:
+> 所以这三方不能被处理成简单的命令源。
 
-- Do not summarize untouched material to make the article feel complete.
-- Do not use source material to add arguments the user did not make.
-- Do not let source material become the article's main voice.
-- Do not turn "the user mentioned a word" into permission to import the whole source section.
-- Do not correct or upgrade the user's view inside the article. Put that in `AI 建议`.
+### 4. 写文章正文
 
-If a source bridge would be doing the real thinking for the user, delete it or move the issue to `AI 建议`.
+正文写给没有听过访谈的读者。
 
-Bad:
+开头必须是读者入口，不要默认使用访谈第一问的回答。类似“读 X，最让我有感受的是……”这种开头，通常保留的是访谈入口，不是文章入口。只有它确实是最好的读者入口时才使用。
 
-> Helpful 也要这样看。
+每一段都要推动文章走向用户主线：
 
-Good:
+- 打开材料里的张力。
+- 引入用户的理解。
+- 只在必要处补原材料上下文。
+- 推到用户已经说出的边界、例子或判断。
+- 停在用户思想自然抵达的位置。
 
-> 材料谈 helpfulness 时，并没有把“让用户满意”单独拿出来。它前面还压着安全、伦理和可监督这些约束。放到这里，我的理解是：真正的帮助不能只是顺着用户心意走。
+文章可以短。清楚的一篇短文，胜过覆盖全部回答的长文。
 
-The good version works because it uses the material's discussed structure to bridge into the user's judgment. It does not add a new claim for the user.
+### 5. 写 `AI 建议`
 
-### Single-Point Argument
+`AI 建议` 必须和正文分开。
 
-Use when the user clarified one core judgment and gave a reason, analogy, example, or boundary.
+它可以写：
 
-Shape:
+- 尚未覆盖的材料点。
+- 用户判断还需要支撑的地方。
+- 可能偏离材料的例子。
+- 发布时可能被误解的风险。
+- 值得下次继续追的问题。
 
-- Title from the user's core judgment.
-- Open with the material point that triggered the user's judgment.
-- Explain the judgment in the user's language.
-- Add the user's reason, analogy, example, or boundary.
-- End only where the user's thought actually ended.
+最多五条。使用外部知识时，用 `可以考虑`、`需要核实`、`可能延伸` 这类表述。
 
-Do not pretend this covers the whole material.
+## 口吻与清理
 
-### Multi-Point Synthesis
+保留用户的意思、节奏和关键表达。不要保留明显的语音输入错误。
 
-Use when the user covered several material anchors and explained their relationship.
+可以直接清理：
 
-Shape:
+- 重复词。
+- 明显语音识别错误。
+- 说到一半重启的句子。
+- 让书面中文变别扭的口头填充。
+- 意图清楚但结构破碎的短句。
 
-- Title from the user's overall understanding.
-- Open with the user's map of the material.
-- Organize each touched anchor in the user's logic order.
-- Show the relationship between anchors.
-- End with the user's strongest synthesis or remaining question.
+例子：
 
-Do not add untouched chapters or concepts.
+- 坏：`每个人、每个体，它有自己的品格`
+- 好：`每个个体都有自己的品格`
 
-### Critical Response
+如果用户的口语本身承重，可以保留，例如：`更灵活这三个字，它没有标准呀`。
 
-Use when the user mainly objected to, revised, or limited the material.
+不要把用户的普通表达改成金句。不要把用户还在生长中的理解改成通用 AI 文章腔。
 
-Shape:
+## 硬边界
 
-- Title from the user's objection or revision.
-- State the material claim only as far as the user discussed it.
-- Present the user's objection.
-- Use the user's reason, example, or boundary.
-- End with the user's correction, condition, or unresolved tension.
+禁止：
 
-Do not turn emotional disagreement into an argument.
+- 发明用户没有说过的观点、例子、风险或结论。
+- 覆盖用户没有谈到的材料内容。
+- 把正文写成原材料总结。
+- 把正文写成访谈纪要。
+- 把 `AI 建议` 写进正文。
+- 用户没有抵达结论时，替他加结论。
+- 让原材料变成正文主声音。
+- 把明显错字、口误、断裂句当作“用户风格”保留。
 
-### Question-Generating Note
+除非用户原话中使用过，否则不要主动生成 `不是 xxx，而是 xxx` 句式。
 
-Use when the user did not reach a conclusion but generated meaningful questions from the material.
+禁止 AI 主动制造这些变体：
 
-Shape:
+- `不是……而是……`
+- `不只是……更是……`
+- `与其说……不如说……`
+- `表面上……本质上……`
 
-- Title from the strongest question.
-- Open with what in the material produced the question.
-- Group related questions.
-- Explain why each question matters based on what the user said.
-- End without forcing an answer.
+需要表达对比时，直接说清楚，不用这些句式。
 
-No conclusion is better than a fake conclusion.
+## 最终检查
 
-### Narrative-Anchored Reflection
+输出前，把文章当作普通读者来读一遍。假设读者没有听过访谈。
 
-Use when the material is centered on a person, event, story, controversy, or concrete case.
+只有满足这些条件，才算通过：
 
-Shape:
+- 开头给了读者继续读的理由。
+- 标题承诺在前面就出现，而不是最后才出现。
+- 段落按照内部推进路径往前走。
+- 原材料上下文只解决读者困惑，没有接管文章。
+- 每个实质句子都能追溯到用户回答，或追溯到必要的原材料上下文。
+- 结尾落在用户实际说出的判断、边界或问题上。
 
-- Title from the user's interpretation of the story or event.
-- Give only the minimum story context the user already mentioned.
-- Present what the user thinks is the key turn.
-- Explain what this story reveals according to the user.
-- End with the user's boundary, misreading warning, or open question.
+如果某一段只是回答了访谈里的下一题，重写或删除。
 
-Do not retell the whole source story unless the user already did.
+如果 `所以`、`同样`、`也要这样看` 这类转折词掩盖了关系缺失，就说清楚关系，或调整段落顺序。
 
-### Application Note
+## 输出契约
 
-Use when the user mainly explained how the material applies to a concrete scene.
+用户确认导出后，优先把文章写入当前会话目录的 `article.md`。
 
-Shape:
+如果存在 `interview.md`：
 
-- Title from the user's application judgment.
-- State the material point being applied.
-- Describe the user's concrete scene.
-- Explain how the material helps in that scene.
-- Add any limits or risks the user mentioned.
+- 把它作为来源记录。
+- 把文章正文和 `AI 建议` 写入 `article.md`。
+- 控制台只返回文件路径。
+- 除非用户要求，不要把全文贴回控制台。
 
-Do not turn the user's scene into life advice.
-
-## Voice Priority
-
-The user's voice outranks the assistant's style.
-
-Language priority:
-
-1. User's clean meaning.
-2. User's strongest original phrases.
-3. Light cleanup in the user's voice.
-4. Necessary connecting sentences.
-5. Assistant wording.
-
-The assistant may:
-
-- Reorder material.
-- Remove repetition.
-- Add transitions.
-- Add necessary context.
-- Add source bridges under `Source Bridges`.
-- Smooth spoken fragments.
-- Clarify ambiguous references such as "this" or "it".
-- Correct obvious typos, speech-to-text artifacts, duplicated words, false starts, and malformed phrases.
-- Merge two broken spoken clauses into one readable sentence when the meaning is clear.
-
-The assistant must not:
-
-- Invent user opinions.
-- Insert source summary as article body without a bridge, guide, or locator job.
-- Replace the user's plain wording with polished AI prose.
-- Turn ordinary user language into slogans.
-- Elevate personal scenes into life lessons.
-- Add new arguments for completeness.
-- Add a conclusion when the user did not reach one.
-- Translate a vivid user phrase into smoother written prose when the original phrase already works.
-- Add technical failure modes, examples, risks, or concepts that the user did not say.
-- Preserve accidental wording that makes the sentence confusing.
-- Include every user answer merely because it appeared in the interview.
-
-## Speech Cleanup
-
-Preserving user voice means preserving meaning, rhythm, and strong phrases. It does not mean preserving typos, voice-input errors, or broken spoken fragments.
-
-Clean these without asking:
-
-- duplicated subjects or words
-- obvious speech-to-text errors
-- mid-sentence restarts
-- filler particles that make written Chinese clumsy
-- malformed phrases where the intended wording is obvious
-
-Example:
-
-- Bad: `每个人、每个体，它有自己的品格`
-- Good: `每个个体都有自己的品格`
-- Also acceptable: `每个人都有自己的品格`
-
-Do not over-clean into generic essay prose. Keep useful spoken flavor, such as `更灵活这三个字，它没有标准呀`, when it carries the user's thought.
-
-## Source Traceability
-
-Every substantive sentence in the article must trace back to one of these:
-
-- A user sentence or phrase.
-- A direct, minimal cleanup of a user sentence.
-- A necessary connector that does not add a new claim.
-- A source-material bridge that follows `Source Bridges`.
-
-If the assistant can only justify a sentence by saying "this follows from what the user said", keep it out of the article. Put it in `AI 建议` if it is useful.
-
-Traceability is not literal copying. A cleaned sentence may be traceable even when it fixes wording, removes repetition, or corrects an obvious speech error.
-
-Before output, run this internal check on each paragraph:
-
-- Which user answer supports this paragraph?
-- What job does this paragraph do for the article theme?
-- What is its logical relation to the previous paragraph?
-- Did the user say this, or did I infer it?
-- If it uses source material, did the user explicitly discuss this anchor?
-- If I removed assistant-written polish, would the user's point still be visible?
-- Did I add a new example, risk, failure mode, or conclusion?
-
-Delete or move any paragraph that fails this check.
-
-## Transition Audit
-
-Before output, scan every paragraph boundary.
-
-Each adjacent pair must have at least one clear relation:
-
-- progression: the next paragraph follows from the previous one.
-- contrast: the next paragraph names a tension or limit.
-- concretization: the next paragraph gives a case, term, or boundary.
-- source structure: the source material links both anchors and the user discussed both.
-
-If the relation is unclear, do one of these:
-
-- Add a source bridge if the bridge is allowed.
-- Rewrite the opening sentence of the next paragraph.
-- Add a small heading when the article legitimately shifts to a parallel point.
-- Delete or move the paragraph to `AI 建议` if it only exists because it was in the interview.
-
-Do not use empty transition phrases to hide a missing relation:
-
-- "也要这样看"
-- "所以"
-- "另一个点是"
-- "这也说明"
-- "回到..."
-
-These phrases are allowed only when the actual relation is stated in the same sentence or immediately before it.
-
-## Anti-Polish Rules
-
-The article should feel like the user's spoken understanding organized on paper, not like an assistant's finished essay.
-
-Prefer:
-
-- User's original short sentence.
-- Slightly cleaned spoken rhythm.
-- Concrete words the user used.
-- A plain ending where the user's thought naturally stops.
-- A short article with a clear theme over a longer article that includes every answer.
-
-Avoid:
-
-- Slogan endings.
-- Symmetric closing lines.
-- Over-complete argument chains.
-- Chronological stitching of all interview turns.
-- Paragraphs that repeat the interview order but do not build an article.
-- Dramatic line breaks around weak or unclear phrases.
-- Extra rhetorical questions not asked by the user.
-- Phrases that sound like an article template.
-- Reframing user examples into universal lessons.
-
-If the user says "更灵活这三个字，它没有标准呀", keep that flavor. Do not automatically rewrite it into a polished thesis unless the user asks for polishing.
-
-## Prohibited Contrast Pattern
-
-Do not generate "不是 xxx，而是 xxx" style sentences unless the user used that pattern in their own answer.
-
-Allowed:
-
-- Keep or lightly clean this pattern if it appears in the user's original words.
-
-Forbidden:
-
-- Add "不是……而是……" as an assistant-created rhetorical pattern.
-- Add similar variants such as "并不是……而是……", "真正的不是……而是……", or "核心不是……而是……".
-- Add variants such as "不只是……更是……", "与其说……不如说……", "不是为了……而是……", or "表面上……本质上……".
-
-If a contrast is needed, write it plainly without that pattern.
-
-Before output, scan the article body for these strings:
-
-- 不是
-- 而是
-- 不只是
-- 更是
-- 与其说
-- 不如说
-- 表面上
-- 本质上
-
-If any appear in assistant-created sentences, rewrite them plainly or remove them.
-
-## Output Contract
-
-When the user confirms article export, prefer writing `article.md` in the active session directory.
-
-If `references/session-persistence.md` has created an active session and file writing is available:
-
-- Use `interview.md` as the source record.
-- Write the article and `AI 建议` into `article.md`.
-- Return only file paths in the console.
-- Do not print the full article in the console unless the user asks to see it.
-
-Console response after successful file output:
+成功写入后的控制台回复：
 
 ```text
 已导出：
@@ -416,11 +220,7 @@ Console response after successful file output:
 文章：<article.md>
 ```
 
-If file writing is disabled, unavailable, or fails, fall back to console output and include both sections below.
-
-### article.md Shape
-
-When writing to file, use this shape:
+### article.md 结构
 
 ```markdown
 ---
@@ -428,11 +228,10 @@ title: "<文章标题>"
 source_session: "./interview.md"
 created_at: "<ISO 时间>"
 material_scope: "<只覆盖本轮访谈 / 覆盖整个会话>"
+writing_basis: "以访谈中用户已经说出的理解为主，只使用已经谈到的材料内容作必要上下文"
 ---
 
 # <文章标题>
-
-> 这篇文章以本轮访谈中你已经说出的理解为主，只引用或转述已经谈到的材料内容。
 
 <文章正文>
 
@@ -441,84 +240,10 @@ material_scope: "<只覆盖本轮访谈 / 覆盖整个会话>"
 - <建议 1>
 ```
 
-If there is no `interview.md`, omit `source_session` and state the source as the current conversation.
+`writing_basis` 属于 frontmatter，不进入正文。
 
-### Console Fallback
+如果无法写文件，只能在控制台输出，先输出一条正文外说明：
 
-When writing to file is not available, output two sections in the console.
+> 说明：下文以本轮访谈中用户已经说出的理解为主，只引用或转述已经谈到的材料内容。
 
-First, start with:
-
-> 这篇文章以本轮访谈中你已经说出的理解为主，只引用或转述已经谈到的材料内容。
-
-Then output the article.
-
-Article rules:
-
-- Use a title based on the user's core judgment.
-- Make the opening establish one clear theme, not just restate the first interview answer.
-- Do not title it "读《XX》有感".
-- Do not describe the interview process.
-- Do not include material anchors the user did not discuss.
-- Use source bridges only for material anchors the user discussed.
-- Do not include all user statements by default.
-- Do not preserve confusing oral fragments, typos, or voice-input artifacts.
-- Do not add conclusions the user did not say.
-- Do not include AI advice in the article body.
-
-### Section 2: AI 建议
-
-Use this heading exactly:
-
-## AI 建议
-
-This section may include:
-
-- An example that may be slightly off from the material.
-- A judgment that may not stand strongly yet.
-- A risk if the user publishes the article.
-- Material anchors not covered.
-- Hidden questions worth continuing.
-- External directions worth checking.
-
-Rules:
-
-- Keep this section separate from the article.
-- Do not rewrite AI suggestions back into the article unless the user asks.
-- Use at most five bullets.
-- If using knowledge outside the interview or source material, frame it as "可以考虑", "需要核实", or "可能延伸".
-- For factual, current, legal, medical, financial, or other high-stakes claims, state that verification is needed.
-- Do not build a new conceptual frame for the user.
-- Do not create a new binary question or polished thesis for an untouched anchor.
-- For unfinished anchors, simply name the anchor and why it may be worth returning to.
-
-Good:
-
-> 下一次可以回到材料里的 corrigibility，看它和品格判断之间是什么关系。
-
-Avoid:
-
-> 下一步最值得追的是：corrigibility 到底是外部限制，还是一种阶段性的品格。
-
-## Failure Modes
-
-The export fails if:
-
-- The article becomes a source-material summary.
-- The article is more complete than what the user actually said.
-- The article sounds like generic AI prose instead of the user.
-- The article uses source bridges to create claims the user did not make.
-- The article jumps between paragraphs with empty transitions such as "也要这样看" or unsupported "所以".
-- A paragraph only changes topic without showing progression, contrast, concretization, or source structure.
-- AI advice leaks into the article body.
-- The assistant fills in untouched material anchors.
-- Every interview is forced into the same article route.
-- The article hard-threads every user answer into one essay.
-- The article has a catchy title but no clear theme.
-- The article preserves obvious typos, speech-to-text errors, or broken spoken fragments as if they were style.
-- The article line-breaks a weak fragment to make it look profound.
-- The ending stage starts asking new interview questions.
-- The article contains assistant-created "不是 xxx，而是 xxx" style sentences.
-- The ending prompt exposes internal route labels or announces the article's main line before the user confirms.
-- The article contains technical risks, failure modes, examples, or publishing conclusions that the user did not say.
-- The article ends with assistant-made slogan lines instead of the user's own stopping point.
+然后再输出文章正文和 `AI 建议`。
